@@ -6,17 +6,24 @@
 #include "Helpers\WindowsHelpers.h"
 
 struct ProcessingUnitInfo;
+struct Pixel
+{
+	unsigned char R, G, B;
+};
 
 class ImgFilterBase
 {
 private:
 
 protected:
-	unsigned char *_data;
+	Pixel *_data;
 	unsigned int _imgWidth, _imgHeight;
 	unsigned int *_filter, _filterRank;
 
 	ImgFilterBase();
+	~ImgFilterBase();
+	//Giving an index value and it's limit, this function will make sure the index is inside the matrix
+	static unsigned int FixIndex(int index, unsigned int limit) restrict(amp, cpu);
 
 public:
 	virtual unsigned int ImplementationId() = 0;
@@ -31,7 +38,7 @@ public:
 
 	//Apply filter using the specified Processing Unit
 	//If the index is not valid it will throw an exception
-	virtual void Filter(unsigned int puIndex) = 0;
+	virtual void Filter(unsigned int puIndex, bool normalize = true) = 0;
 };
 
 struct ProcessingUnitInfo {

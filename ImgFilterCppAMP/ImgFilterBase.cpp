@@ -12,7 +12,7 @@ ImgFilterBase::ImgFilterBase()
 
 void ImgFilterBase::SetData(unsigned char *data, unsigned int width, unsigned int height)
 {
-	_data = data;
+	_data = (Pixel*)data;
 	_imgHeight = height;
 	_imgWidth = width;
 }
@@ -24,4 +24,21 @@ void ImgFilterBase::SetFilter(unsigned int *filter, unsigned int filterRank)
 
 	_filter = new unsigned int[filterRank*filterRank];
 	memcpy(_filter, filter, filterRank*filterRank*sizeof(unsigned int));
+}
+
+unsigned int ImgFilterBase::FixIndex(int index, unsigned int limit) restrict(amp, cpu)
+{
+	if (index < 0)
+		return 0;
+	if (index >= limit)
+		return limit - 1;
+
+	return index;
+}
+
+
+
+ImgFilterBase::~ImgFilterBase()
+{
+	delete[] _filter;
 }
