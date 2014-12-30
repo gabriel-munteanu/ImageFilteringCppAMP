@@ -2,8 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <amp.h>
 
 #include "Helpers\WindowsHelpers.h"
+
+using namespace concurrency;
 
 #define PIXEL_SIZE 3 //bytes
 
@@ -42,7 +45,7 @@ public:
 
 	//Set the filter that will be applied to the image. 
 	//The rank of the matrix must be an odd value and greater or equal to 3
-	void SetFilter(unsigned int *filter, unsigned int filterRank);
+	void SetFilter(int *filter, unsigned int filterRank);
 
 	//Apply filter using the specified Processing Unit
 	//If the index is not valid it will throw an exception

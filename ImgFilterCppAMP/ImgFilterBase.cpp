@@ -17,7 +17,7 @@ void ImgFilterBase::SetImage(unsigned char *data, unsigned int width, unsigned i
 	_imgWidth = width;
 }
 
-void ImgFilterBase::SetFilter(unsigned int *filter, unsigned int filterRank)
+void ImgFilterBase::SetFilter(int *filter, unsigned int filterRank)
 {
 	if (filterRank < 3 || filterRank % 2 == 0)
 		throw new std::exception("Invalid filter rank");
@@ -27,7 +27,7 @@ void ImgFilterBase::SetFilter(unsigned int *filter, unsigned int filterRank)
 	memcpy(_filter, filter, filterRank*filterRank*sizeof(unsigned int));
 	
 	_filterNorm = 0;
-	for (int i = 0; i < filterRank*filterRank; i++)
+	for (unsigned int i = 0; i < filterRank*filterRank; i++)
 		_filterNorm += _filter[i];
 }
 

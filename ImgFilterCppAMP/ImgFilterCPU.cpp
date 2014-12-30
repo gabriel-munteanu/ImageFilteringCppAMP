@@ -68,7 +68,7 @@ void ImgFilterCPU::FilterLines(ImgFilterCPU *instance, unsigned long startLine, 
 
 	while (line < height)
 	{
-		for (int column = 0; column < width; column++)
+		for (unsigned int column = 0; column < width; column++)
 			instance->FilterPixel(line, column);
 
 		line += concurrentThreads;
@@ -91,11 +91,11 @@ void ImgFilterCPU::FilterPixelComponent(unsigned int line, unsigned int column, 
 			Pixel *pixAddr = _data + (FixIndex(lineImg, _imgHeight) * _imgWidth + FixIndex(colImg, _imgWidth));
 			int filterValue = _filter[lineFltr*_filterRank + colFltr];
 
-			accumulator += filterValue * *((char*)pixAddr + offset);
+			accumulator += filterValue * *((unsigned char*)pixAddr + offset);
 		}
 	if (_normalize && _filterNorm != 0)
 		accumulator /= _filterNorm;
 
 	Pixel *outPixAddr = _resultData + (line *_imgWidth + column);
-	*((char*)outPixAddr + offset) = (char)FixColorComponentValue(accumulator);
+	*((unsigned char*)outPixAddr + offset) = (unsigned char)FixColorComponentValue(accumulator);
 }
