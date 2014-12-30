@@ -10,7 +10,7 @@ ImgFilterBase::ImgFilterBase()
 	_filterRank = 0;
 }
 
-void ImgFilterBase::SetData(unsigned char *data, unsigned int width, unsigned int height)
+void ImgFilterBase::SetImage(unsigned char *data, unsigned int width, unsigned int height)
 {
 	_data = (Pixel*)data;
 	_imgHeight = height;
@@ -22,8 +22,13 @@ void ImgFilterBase::SetFilter(unsigned int *filter, unsigned int filterRank)
 	if (filterRank < 3 || filterRank % 2 == 0)
 		throw new std::exception("Invalid filter rank");
 
-	_filter = new unsigned int[filterRank*filterRank];
+	_filterRank = filterRank;
+	_filter = new int[filterRank*filterRank];
 	memcpy(_filter, filter, filterRank*filterRank*sizeof(unsigned int));
+	
+	_filterNorm = 0;
+	for (int i = 0; i < filterRank*filterRank; i++)
+		_filterNorm += _filter[i];
 }
 
 unsigned int ImgFilterBase::FixIndex(int index, unsigned int limit) restrict(amp, cpu)
@@ -36,7 +41,16 @@ unsigned int ImgFilterBase::FixIndex(int index, unsigned int limit) restrict(amp
 	return index;
 }
 
+unsigned int ImgFilterBase::FixColorComponentValue(int value) restrict(amp, cpu)
+{
+	if (value < 0)
+		return 0;
 
+	if (value > 255)
+		return 255;
+
+	return value;
+}
 
 ImgFilterBase::~ImgFilterBase()
 {

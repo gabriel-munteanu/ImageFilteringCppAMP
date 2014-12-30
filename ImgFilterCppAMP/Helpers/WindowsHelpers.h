@@ -3,7 +3,7 @@
 //Example from http://msdn.microsoft.com/en-us/library/windows/desktop/ms683194(v=vs.85).aspx
 
 
-class Helper {
+class WindowsHelper {
 private:
 
 typedef BOOL(WINAPI *LPFN_GLPI)(
@@ -41,14 +41,14 @@ static unsigned int GetAvailableLogicalProcessors() {
 
 	for (unsigned int i = 0; i < returnLength / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); i++)
 		if (buffer[i].Relationship == RelationProcessorCore)
-			// A hyperthreaded core supplies more than one logical processor.
+			// A hyper threaded core supplies more than one logical processor.
 			logicalProcessorCount += CountSetBits(buffer[i].ProcessorMask);
 
 	delete[] buffer;
 	return logicalProcessorCount;
 }
 
-//this will return time difference in miliseconds
+//this will return time difference in milliseconds
 static double ElapsedTime(const __int64 &start, const __int64 &end) {
 	LARGE_INTEGER freq;
 	QueryPerformanceFrequency(&freq);

@@ -5,6 +5,10 @@
 
 #include "Helpers\WindowsHelpers.h"
 
+#define PIXEL_SIZE 3 //bytes
+
+#define FltrBckOffset(index) (index - (_filterRank/2))
+
 struct ProcessingUnitInfo;
 struct Pixel
 {
@@ -18,19 +22,23 @@ private:
 protected:
 	Pixel *_data;
 	unsigned int _imgWidth, _imgHeight;
-	unsigned int *_filter, _filterRank;
+	int *_filter, _filterNorm;
+	unsigned int _filterRank;
+	bool _normalize;
 
 	ImgFilterBase();
 	~ImgFilterBase();
 	//Giving an index value and it's limit, this function will make sure the index is inside the matrix
 	static unsigned int FixIndex(int index, unsigned int limit) restrict(amp, cpu);
+	//After we compute the color component value we need to make sure that it's value is between 0 and 255
+	static unsigned int FixColorComponentValue(int value) restrict(amp, cpu);
 
 public:
 	virtual unsigned int ImplementationId() = 0;
 	virtual std::vector<ProcessingUnitInfo> GetAvailableProcessingUnits() = 0;
 
 	//The data will be overwrite by filter process
-	void SetData(unsigned char *data, unsigned int width, unsigned int height);
+	void SetImage(unsigned char *data, unsigned int width, unsigned int height);
 
 	//Set the filter that will be applied to the image. 
 	//The rank of the matrix must be an odd value and greater or equal to 3
