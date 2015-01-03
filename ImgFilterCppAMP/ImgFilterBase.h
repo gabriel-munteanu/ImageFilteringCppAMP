@@ -10,7 +10,7 @@ using namespace concurrency;
 
 #define PIXEL_SIZE 3 //bytes
 
-#define FltrBckOffset(index) (index - (_filterRank/2))
+#define FltrBckOffset(index, fltrRank) (index - (fltrRank/2))
 
 struct ProcessingUnitInfo;
 struct Pixel
@@ -30,13 +30,30 @@ protected:
 	bool _normalize;
 
 	ImgFilterBase();
-	~ImgFilterBase();
 	//Giving an index value and it's limit, this function will make sure the index is inside the matrix
-	static unsigned int FixIndex(int index, unsigned int limit) restrict(amp, cpu);
+	static unsigned int FixIndex(int index, unsigned int limit) restrict(amp, cpu)
+	{
+		if (index < 0)
+			return 0;
+		if (index >= limit)
+			return limit - 1;
+
+		return index;
+	}
 	//After we compute the color component value we need to make sure that it's value is between 0 and 255
-	static unsigned int FixColorComponentValue(int value) restrict(amp, cpu);
+	static unsigned int FixColorComponentValue(int value) restrict(amp, cpu)
+	{
+		if (value < 0)
+			return 0;
+
+		if (value > 255)
+			return 255;
+
+		return value;
+	}
 
 public:
+	~ImgFilterBase();
 	virtual unsigned int ImplementationId() = 0;
 	virtual std::vector<ProcessingUnitInfo> GetAvailableProcessingUnits() = 0;
 

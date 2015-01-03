@@ -29,3 +29,7 @@
 *.opensdf
 *.sdf
 *.suo
+/Debug
+/ImgFilterCppAMP/Debug
+/ImgFilterCppAMP/Release
+/Release

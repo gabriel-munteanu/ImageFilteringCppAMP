@@ -85,8 +85,8 @@ void ImgFilterCPU::FilterPixel(unsigned int line, unsigned int column)
 void ImgFilterCPU::FilterPixelComponent(unsigned int line, unsigned int column, unsigned int offset)
 {
 	int accumulator = 0;
-	for (int lineImg = FltrBckOffset(line), lineFltr = 0; lineFltr < _filterRank; lineImg++, lineFltr++)
-		for (int colImg = FltrBckOffset(column), colFltr = 0; colFltr < _filterRank; colImg++, colFltr++)
+	for (int lineImg = FltrBckOffset(line, _filterRank), lineFltr = 0; lineFltr < _filterRank; lineImg++, lineFltr++)
+		for (int colImg = FltrBckOffset(column, _filterRank), colFltr = 0; colFltr < _filterRank; colImg++, colFltr++)
 		{
 			Pixel *pixAddr = _data + (FixIndex(lineImg, _imgHeight) * _imgWidth + FixIndex(colImg, _imgWidth));
 			int filterValue = _filter[lineFltr*_filterRank + colFltr];
