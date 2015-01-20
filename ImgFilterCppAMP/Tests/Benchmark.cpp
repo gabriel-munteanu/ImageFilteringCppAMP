@@ -9,15 +9,17 @@ std::vector<std::string> Benchmark::_testImages;
 
 void Benchmark::GenerateTestValues()
 {
+	_testImages.clear();
 	char fileName[128];
-	for (int i = 1; i <= 16; i++) {
-		sprintf(fileName, "InputBenchmark/%i.bmp", i);
+	for (int i = 1; i <= 2; i++) {
+		sprintf_s(fileName, "InputBenchmark/%i.bmp", i);
 		_testImages.push_back(std::string(fileName));
 	}
 }
 
 void Benchmark::HardPerformanceTest() {
 
+	GenerateTestValues();
 	ImgFilterBase *implementations[] = { new ImgFilterAMP(), new ImgFilterCPU() };
 	int implementationsCount = sizeof(implementations) / sizeof(implementations[0]);
 
@@ -42,12 +44,12 @@ void Benchmark::HardPerformanceTest() {
 
 	//for each test run all PUs, this way we don't stress to much one PU at once
 	for (unsigned int testIndex = 0; testIndex < _testImages.size(); testIndex++) {
-		bitmap_image *image = new bitmap_image("input.bmp");
+		bitmap_image *image = new bitmap_image(_testImages[testIndex]);
 		std::cout << "# " << image->size() / 1024 / 1024.0 << "MB\n";
 
 		for (unsigned int puIndex = 0; puIndex < pusInfo.size(); puIndex++) {
-			LARGE_INTEGER tStart, tEnd;			
-			
+			LARGE_INTEGER tStart, tEnd;
+
 			pusInfo[puIndex].implementation->SetFilter((int*)filter, 3);
 			pusInfo[puIndex].implementation->SetImage((unsigned char*)image->data(), image->width(), image->height());
 			std::cout << pusInfo[puIndex].name << "\n";
@@ -57,7 +59,7 @@ void Benchmark::HardPerformanceTest() {
 			pusInfo[puIndex].implementation->Filter(pusInfo[puIndex].processingUnitId);
 			QueryPerformanceCounter(&tEnd);
 
-			pusTimings[puIndex].push_back(WindowsHelper::ElapsedTime(tStart.QuadPart, tEnd.QuadPart));			
+			pusTimings[puIndex].push_back(WindowsHelper::ElapsedTime(tStart.QuadPart, tEnd.QuadPart));
 		}
 
 		delete image;
@@ -84,12 +86,11 @@ void Benchmark::ExportHardBenchmarkData(std::vector<ProcessingUnitInfo> pusInfo,
 	fout.open(filename);
 
 	//the first line will contain the memory values used for tests
-	fout << ",,,";//this is an 'empty PU description'
-	for (auto memValue : _testImages) {
-		if (memValue < 2 << 19)//if memValue unde 1MB then write KB, else MB
-			fout << memValue / 1024 << "KB, ";
-		else
-			fout << memValue / 1024 / 1024 << "MB, ";
+	fout << ",,Dedicated Memory(MB),";//this is an 'empty PU description'
+	for (auto tImage : _testImages) {
+		bitmap_image *image = new bitmap_image(tImage);
+		fout << image->width() << "x" << image->height() << " [" << image->size() / 1024 / 1024 << "MB]";
+		delete image;
 	}
 	fout << "\n";
 

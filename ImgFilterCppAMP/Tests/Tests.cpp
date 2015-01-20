@@ -39,7 +39,7 @@ void TestImgFilterAMP()
 {
 	std::cout << "Testing Image Filtering AMP implementation\r\n";
 
-	ImgFilterCPU imgFilterAMP;
+	ImgFilterAMP imgFilterAMP;
 	bitmap_image image("input.bmp");
 
 	if (!image)
@@ -49,16 +49,17 @@ void TestImgFilterAMP()
 	}
 
 	int filter[3][3] = {
-		{ 0, 0, 0 },
-		{ 0, 1, 3 },
-		{ -7, 0, 0 }
+		{ 2, 1, 1 },
+		{ 1, 1, 1 },
+		{ 1, 1, 2 }
 	};
 
 	imgFilterAMP.SetFilter((int*)filter, 3);
 	//a little hacking so we don't need to create a new image, just overwrite this image data and save it with another name
 	imgFilterAMP.SetImage((unsigned char*)image.data(), image.width(), image.height());
 
+	imgFilterAMP.GetAvailableProcessingUnits();
 
-	imgFilterAMP.Filter(1);
+	imgFilterAMP.Filter(1, true);
 	image.save_image("TestOutput/1.TestImgFilterAMP.bmp");
 }

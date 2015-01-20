@@ -2,6 +2,7 @@
 
 #include "ImgFilterCPU.h"
 #include "Tests\Tests.h"
+#include "Tests\Benchmark.h"
 
 
 void list_all_accelerators()
@@ -20,8 +21,14 @@ void list_all_accelerators()
 	}
 }
 
-int main() {	
-	TestImgFilterAMP();
+int main() {
+	try{
+		TestImgFilterAMP();
+	}
+	catch (std::exception &ex) {
+		std::cout << ex.what() << "\n";
+	}
+	//Benchmark::HardPerformanceTest();
 	std::cout << "\r\nOK";
 	getchar();
 	return 0;

@@ -40,7 +40,7 @@ void ImgFilterAMP::AMPFilter(unsigned int puIndex)
 {
 	unsigned long dataLength = _imgWidth * _imgHeight * PIXEL_SIZE;
 	accelerator_view accView = _availableAccelerator[puIndex].create_view(queuing_mode::queuing_mode_immediate);
-	extent<2> acc_ext(_imgWidth, _imgHeight);
+	extent<2> acc_ext(_imgHeight, _imgWidth);
 
 	ConstFilterData constData = { _imgWidth, _imgHeight, _filterRank, _filterNorm, _normalize ? 1 : 0 };
 	for (int i = 0; i < _filterRank; i++)
@@ -48,8 +48,8 @@ void ImgFilterAMP::AMPFilter(unsigned int puIndex)
 			constData.filter[i][j] = _filter[i * _filterRank + j];
 
 	//allocate memory on GPU and copy data to it
-	array<unsigned int> acc_data((dataLength / 4) + 1, accView);
-	array<unsigned int> acc_res_data((dataLength / 4) + 1, accView);//result data
+	array<unsigned int> acc_data((dataLength / 4), accView);
+	array<unsigned int> acc_res_data((dataLength / 4), accView);//result data
 	copy((unsigned int*)_data, acc_data);
 	accView.wait();
 
@@ -95,6 +95,6 @@ void ImgFilterAMP::Filter(unsigned int puIndex, bool normalize)
 
 	_normalize = normalize;
 
-
+	AMPFilter(puIndex);
 }
 
