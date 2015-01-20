@@ -11,7 +11,7 @@ void Benchmark::GenerateTestValues()
 {
 	_testImages.clear();
 	char fileName[128];
-	for (int i = 1; i <= 2; i++) {
+	for (int i = 1; i <= 16; i++) {
 		sprintf_s(fileName, "InputBenchmark/%i.bmp", i);
 		_testImages.push_back(std::string(fileName));
 	}
@@ -89,7 +89,7 @@ void Benchmark::ExportHardBenchmarkData(std::vector<ProcessingUnitInfo> pusInfo,
 	fout << ",,Dedicated Memory(MB),";//this is an 'empty PU description'
 	for (auto tImage : _testImages) {
 		bitmap_image *image = new bitmap_image(tImage);
-		fout << image->width() << "x" << image->height() << " [" << image->size() / 1024 / 1024 << "MB]";
+		fout << image->width() << "x" << image->height() << " [" << image->size() / 1024 / 1024 << "MB],";
 		delete image;
 	}
 	fout << "\n";
